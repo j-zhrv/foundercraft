@@ -11,6 +11,7 @@
 - Нет MCP endpoint, hooks, runner, настроек моделей или app bindings. WebMCP обнаруживается на текущей странице сайта.
 - `policy.installation=AVAILABLE`, `authentication=ON_USE`: значения проверены по схеме локального app-server. У skills-only пакета нет внешнего входа в аккаунт.
 - `policy.products` намеренно отсутствует: нет запроса ограничивать продукт. Официальный пример marketplace допускает отсутствие поля и описывает Work. Ограничение `CODEX` из примера open-pstack не перенесено, непроверенные значения для Work не придуманы.
+- OpenAI `interface.category` проверяется по точным названиям Plugin Creator; для этого пакета используется `Education & Research`. Portable JSON Schema сама по себе не проверяет этот список. `marketplace.category` проверяется отдельно как строка: [парсер Codex](https://github.com/openai/codex/blob/main/codex-rs/core-plugins/src/marketplace.rs) не задаёт ему тот же enum и использует его как отображаемую метку с приоритетом над манифестом. Совпадение двух меток — выбранное правило этого репозитория, а не общий контракт двух форматов.
 
 Пример [open-pstack](https://github.com/ericlitman/open-pstack/blob/main/.agents/plugins/marketplace.json) использован только как модель расположения пакета и каталога. Его рабочие процессы и runner не включены.
 
@@ -22,6 +23,7 @@
 python3 -m venv /tmp/foundercraft-check
 /tmp/foundercraft-check/bin/pip install -r requirements-dev.txt
 /tmp/foundercraft-check/bin/python scripts/check.py
+/tmp/foundercraft-check/bin/python -m unittest discover -s tests -v
 curl --fail --location https://agent-plugins.org/schemas/1.0.0/plugin.schema.json -o /tmp/foundercraft-plugin.schema.json
 /tmp/foundercraft-check/bin/python scripts/check.py --schema /tmp/foundercraft-plugin.schema.json --links --archive /tmp/foundercraft.zip
 ```

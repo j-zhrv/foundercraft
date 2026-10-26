@@ -19,6 +19,10 @@ def main():
     parser.add_argument('--marketplace-path', type=Path,
                         default=Path(__file__).resolve().parents[1] / '.agents/plugins/marketplace.json')
     args = parser.parse_args()
+    manifest = json.loads((Path(__file__).resolve().parents[1]
+                           / 'plugins/foundercraft/plugin.json').read_text())
+    expected_version = manifest['version']
+    expected_category = manifest['extensions']['com.openai']['interface']['category']
     process = subprocess.Popen([args.codex, 'app-server'], stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
     messages = queue.Queue()
@@ -51,7 +55,7 @@ def main():
 
     try:
         request(1, 'initialize', {
-            'clientInfo': {'name': 'foundercraft-package-smoke', 'version': '0.2.0'},
+            'clientInfo': {'name': 'foundercraft-package-smoke', 'version': expected_version},
             'capabilities': {'experimentalApi': True},
         })
         send({'method': 'initialized'})
@@ -61,11 +65,15 @@ def main():
         })['plugin']
         skills = [{'name': skill['name'], 'enabled': skill['enabled']} for skill in result['skills']]
         summary = result['summary']
+        category = (summary.get('interface') or {}).get('category')
         if not (summary['installed'] and summary['enabled']
+                and summary.get('localVersion') == expected_version and category == expected_category
                 and skills == [{'name': 'foundercraft:foundercraft-coach', 'enabled': True}]
                 and result['mcpServers'] == [] and result['apps'] == [] and result['hooks'] == []):
-            raise RuntimeError('Expected installed/enabled skills-only FounderCraft')
+            raise RuntimeError(f'Expected installed/enabled skills-only FounderCraft {expected_version}'
+                               f' ({expected_category}); got {summary.get("localVersion")} ({category})')
         print(json.dumps({'installed': True, 'enabled': True, 'version': summary.get('localVersion'),
+                          'category': category,
                           'skills': skills, 'mcpServers': [], 'apps': [], 'hooks': []}, indent=2))
     finally:
         process.terminate()

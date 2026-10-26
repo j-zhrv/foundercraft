@@ -20,6 +20,11 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = ROOT / 'plugins/foundercraft'
 SCHEMA = 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json'
+OPENAI_CATEGORIES = {
+    'Business & Operations', 'Communication', 'Creativity', 'Data & Analytics',
+    'Developer Tools', 'Education & Research', 'Entertainment', 'Finance',
+    'Healthcare', 'Other', 'Productivity', 'Scientific Research', 'Security', 'Travel',
+}
 EXPECTED = {
     'plugin.json', '.codex-plugin/plugin.json', 'assets/icon.svg',
     'skills/foundercraft-coach/SKILL.md',
@@ -104,7 +109,8 @@ def check(args):
     require(set(openai) == {'interface'}, 'Unexpected services/hooks/app bindings')
     interface = openai['interface']
     require(0 < len(interface['shortDescription']) <= 30, 'Subtitle exceeds 30 characters')
-    require(interface['category'] == 'Education', 'Unexpected category')
+    require(interface['category'] in OPENAI_CATEGORIES,
+            'Unsupported OpenAI interface.category: use an exact supported listing title')
     require(isinstance(interface['capabilities'], list), 'Capabilities must be an array')
     prompts = interface['defaultPrompt']
     require(isinstance(prompts, list) and 1 <= len(prompts) <= 3, 'Wrong starter prompts')
@@ -133,7 +139,10 @@ def check(args):
     marketplace = json.loads((ROOT / '.agents/plugins/marketplace.json').read_text())
     require(marketplace['name'] == 'foundercraft' and len(marketplace['plugins']) == 1, 'Wrong marketplace')
     entry = marketplace['plugins'][0]
-    require(entry['name'] == manifest['name'] and entry['category'] == interface['category'], 'Catalog mismatch')
+    require(entry['name'] == manifest['name'], 'Catalog identity mismatch')
+    require(isinstance(entry.get('category'), str) and entry['category'].strip(),
+            'Marketplace category must be a nonblank string')
+    require(entry['category'] == interface['category'], 'FounderCraft category labels differ')
     require(entry['source'] == {'source': 'local', 'path': './plugins/foundercraft'}, 'Wrong source')
     require(entry['policy'] == {'installation': 'AVAILABLE', 'authentication': 'ON_USE'}, 'Wrong policy/product restriction')
     require(contained(ROOT, entry['source']['path'] + '/plugin.json') == PACKAGE / 'plugin.json', 'Wrong package root')

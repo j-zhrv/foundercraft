@@ -1,6 +1,6 @@
 {
   "name": "foundercraft",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Помогает выбрать дело основателя под вашу идею или ситуацию компании, начать или продолжить обучение и разбирать карточки и первоисточники FounderCraft в разговоре.",
   "author": {
     "name": "FounderCraft",
@@ -17,7 +17,7 @@
     "capabilities": [
       "Interactive"
     ],
-    "category": "Education",
+    "category": "Education & Research",
     "composerIcon": "./assets/icon.svg",
     "defaultPrompt": [
       "Помоги выбрать набор FounderCraft под мою ситуацию. Задавай по одному вопросу, затем предложи, с чего начать.",
