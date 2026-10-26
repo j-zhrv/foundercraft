@@ -1,0 +1,20 @@
+{
+  "name": "foundercraft",
+  "interface": {
+    "displayName": "FounderCraft"
+  },
+  "plugins": [
+    {
+      "name": "foundercraft",
+      "source": {
+        "source": "local",
+        "path": "./plugins/foundercraft"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Education"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.cache/
+dist/
+*.zip
+*.tar.gz
+.env
+.env.*
+*.log
+private/
+personal/
+notes/
+sessions/
