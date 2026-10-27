@@ -30,7 +30,7 @@ EXPECTED = {
     'skills/foundercraft-coach/SKILL.md',
     *('skills/foundercraft-coach/references/' + name + '.md' for name in (
         'browser', 'guided-dialogue', 'learning-feedback', 'practice',
-        'session-onboarding', 'voice-entry')),
+        'session-onboarding', 'voice-entry', 'site-handoff')),
 }
 
 
