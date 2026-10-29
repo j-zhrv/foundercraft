@@ -9,7 +9,7 @@ class OnboardingContract(unittest.TestCase):
         self.assertEqual(market['name'],'foundercraft');self.assertEqual(len(market['plugins']),1)
         self.assertEqual(market['plugins'][0]['name'],'foundercraft')
         manifest=json.loads((ROOT/'plugins/foundercraft/plugin.json').read_text())
-        self.assertEqual(manifest['version'],'0.3.2')
+        self.assertEqual(manifest['version'],'0.3.3')
         self.assertEqual(set(manifest['extensions']['com.openai']),{'interface'})
     def test_install_guide_preserves_choice_and_distinguishes_profile_and_active_chat(self):
         text=(ROOT/'INSTALL.md').read_text()
