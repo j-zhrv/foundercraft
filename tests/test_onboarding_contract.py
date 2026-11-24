@@ -9,13 +9,21 @@ class OnboardingContract(unittest.TestCase):
         self.assertEqual(market['name'],'foundercraft');self.assertEqual(len(market['plugins']),1)
         self.assertEqual(market['plugins'][0]['name'],'foundercraft')
         manifest=json.loads((ROOT/'plugins/foundercraft/plugin.json').read_text())
-        self.assertEqual(manifest['version'],'0.3.7')
+        self.assertEqual(manifest['version'],'0.3.8')
         self.assertEqual(set(manifest['extensions']['com.openai']),{'interface'})
     def test_install_guide_preserves_choice_and_distinguishes_profile_and_active_chat(self):
         text=(ROOT/'INSTALL.md').read_text()
         for token in ['foundercraft@foundercraft','j-zhrv/foundercraft','--ref main','plugin list --marketplace foundercraft --json','новый Work-чат','Выбор набора не является согласием','облачную песочницу','микрофон']:
             self.assertIn(token,text)
         self.assertNotIn('curl |',text);self.assertNotIn('codex exec',text)
+    def test_coach_reads_local_episode_before_opening_a_site(self):
+        directory = ROOT / 'plugins/foundercraft/skills/foundercraft-coach'
+        self.assertIn('references/local-mcp.md', (directory / 'SKILL.md').read_text(encoding='utf-8'))
+        guide = (directory / 'references/local-mcp.md').read_text(encoding='utf-8')
+        for name in ('foundercraft_current_episode', 'foundercraft_read_template',
+                     'foundercraft_read_work', 'foundercraft_read_material', 'nextCall'):
+            self.assertIn(name, guide)
+
     def test_coach_dispatches_site_handoff_without_loosening_session_consent(self):
         skill=(ROOT/'plugins/foundercraft/skills/foundercraft-coach/SKILL.md').read_text();self.assertIn('references/site-handoff.md',skill)
         handoff=(ROOT/'plugins/foundercraft/skills/foundercraft-coach/references/site-handoff.md').read_text()
